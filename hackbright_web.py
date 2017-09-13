@@ -7,6 +7,23 @@ import hackbright
 app = Flask(__name__)
 
 
+@app.route("/")
+def show_all():
+    """ Show live links to all students and all projects """
+
+    QUERY = """
+    SELECT first_name, last_name, github
+    FROM students
+    """
+
+    db_cursor = db.session.execute(QUERY)
+
+    rows = db_cursor.fetchall()
+
+    return rows
+
+
+
 @app.route("/student")
 def get_student():
     """Show information about a student."""
@@ -15,6 +32,7 @@ def get_student():
 
     first, last, github = hackbright.get_student_by_github(github)
 
+    # a list of (project_title, grade) for a given student
     titles_grades = hackbright.get_grades_by_github(github)
 
 
@@ -55,6 +73,24 @@ def added_student():
     first, last, github = hackbright.get_student_by_github(github)
 
     html = render_template("student_added.html", first=first, last=last, github=github)
+
+    return html
+
+@app.route("/project")
+def show_project():
+    """ show the project title & description given a project title
+    (from GET request)
+    """
+
+    title = request.args.get('title')
+
+    title, description, grade = hackbright.get_project_by_title(title)
+
+    grade_list = hackbright.get_grades_by_title(title)
+
+    html = render_template("project.html", title=title,
+                            description=description, grade=grade,
+                            grade_list=grade_list)
 
     return html
 

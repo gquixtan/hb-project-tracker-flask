@@ -10,14 +10,17 @@
 
 
 <h2>Exercise results:</h2>
+<ul>
+{% for title, grade in titles_grades %}
 
-{% for grade, project in titles_grades %}
-    <ul>
-    <li>{{ grade }}</li>
-    <li>{{ project }}</li>
-    </ul>
+    <li><a href="/project?title={{ title }}">{{ title }}</a> : {{ grade }}</li>
+    <br>
+
 
 {% endfor %}
+</ul>
+
+
 
 
 </body>
